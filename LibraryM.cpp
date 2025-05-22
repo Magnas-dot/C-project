@@ -3,11 +3,11 @@
 #include <stdlib.h>
 
 // Function Declarations
-void add();
-void display();
-void search();
-void issue();
-void returnb();
+void add_book();
+void display_book();
+void search_book();
+void issue_book();
+void return_book();
 
 // Book Structure
 struct books {
@@ -42,19 +42,19 @@ int main() {
 
         switch(choice) {
             case 1:
-                add();
+                add_book();
                 break;
             case 2:
-                display();
+                display_book();
                 break;
             case 3:
-                search();
+                search_book();
                 break;
             case 4:
-                issue();
+                issue_book();
                 break;
             case 5:
-                returnb();
+                return_book();
                 break;
             case 6:
                 printf("Exiting program...\n");
@@ -68,7 +68,7 @@ int main() {
 }
 
 // Add Book
-void add() {
+void add_book() {
     FILE *fp = fopen("Book_Record.txt", "ab");
     struct books b;
 
@@ -94,7 +94,7 @@ void add() {
 }
 
 // Display All Books
-void display() {
+void display_book() {
     FILE *fp = fopen("Book_Record.txt", "rb");
     struct books b;
     int found = 0;
@@ -119,7 +119,7 @@ void display() {
 }
 
 // Search Book by ID
-void search() {
+void search_book() {
     FILE *fp = fopen("Book_Record.txt", "rb");
     struct books b;
     int ch, found = 0;
@@ -150,7 +150,7 @@ void search() {
 }
 
 // Issue Book
-void issue() {
+void issue_book() {
     FILE *fp = fopen("Book_Record.txt", "rb+");
     FILE *fi = fopen("Book_Issue.txt", "ab");
     struct books b;
@@ -202,7 +202,7 @@ void issue() {
 }
 
 // Return Book
-void returnb() {
+void return_book() {
     int book_id, user_id, found = 0;
     struct issue i;
 
