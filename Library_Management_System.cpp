@@ -2,14 +2,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-// Function Declarations
 void add_book();
 void display_book();
 void search_book();
 void issue_book();
 void return_book();
 
-// Book Structure
 struct books {
     char title[50];
     char author[50];
@@ -18,7 +16,6 @@ struct books {
     int year;
 };
 
-// Issue Structure
 struct issue {
     int user_id;
     char name[50];
@@ -39,7 +36,6 @@ int main() {
         printf("6. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-
         switch(choice) {
             case 1:
                 add_book();
@@ -63,15 +59,12 @@ int main() {
                 printf("Invalid choice. Please enter a number between 1 and 6.\n");
         }
     } while(choice != 6);
-    
     return 0;
 }
 
-// Add Book
 void add_book() {
     FILE *fp = fopen("Book_Record.txt", "ab");
     struct books b;
-
     if(fp == NULL) {
         printf("Error opening file.\n");
         return;
@@ -87,18 +80,15 @@ void add_book() {
     scanf("%d", &b.quantity);
     printf("Enter Year: ");
     scanf("%d", &b.year);
-
     fwrite(&b, sizeof(struct books), 1, fp);
     fclose(fp);
     printf("Book added successfully.\n");
 }
 
-// Display All Books
 void display_book() {
     FILE *fp = fopen("Book_Record.txt", "rb");
     struct books b;
     int found = 0;
-
     if(fp == NULL) {
         printf("Error opening file.\n");
         return;
@@ -114,24 +104,19 @@ void display_book() {
     if(!found) {
         printf("No books found.\n");
     }
-
     fclose(fp);
 }
 
-// Search Book by ID
 void search_book() {
     FILE *fp = fopen("Book_Record.txt", "rb");
     struct books b;
     int ch, found = 0;
-
     if(fp == NULL) {
         printf("Error opening file.\n");
         return;
     }
-
     printf("Enter Book ID to search: ");
     scanf("%d", &ch);
-
     while(fread(&b, sizeof(struct books), 1, fp)) {
         if(ch == b.book_id) {
             printf("Book Found:\n");
@@ -141,7 +126,6 @@ void search_book() {
             break;
         }
     }
-
     if(!found) {
         printf("Book not found.\n");
     }
@@ -149,7 +133,6 @@ void search_book() {
     fclose(fp);
 }
 
-// Issue Book
 void issue_book() {
     FILE *fp = fopen("Book_Record.txt", "rb+");
     FILE *fi = fopen("Book_Issue.txt", "ab");
@@ -164,7 +147,6 @@ void issue_book() {
 
     printf("Enter Book ID to issue: ");
     scanf("%d", &b_id);
-
     while(fread(&b, sizeof(struct books), 1, fp)) {
         if(b_id == b.book_id) {
             found = 1;
@@ -176,15 +158,12 @@ void issue_book() {
                 scanf("%d", &i.user_id);
                 printf("Enter Issue Date (YYYY-MM-DD): ");
                 scanf(" %[^\n]", i.issue_date);
-
                 i.issue_book_id = b.book_id;
                 strcpy(i.issue_book_title, b.title);
                 fwrite(&i, sizeof(struct issue), 1, fi);
-
                 b.quantity -= 1;
                 fseek(fp, -sizeof(struct books), SEEK_CUR);
                 fwrite(&b, sizeof(struct books), 1, fp);
-
                 printf("Book (ID: %d) issued to %s (User ID: %d).\n", b.book_id, i.name, i.user_id);
             } else {
                 printf("Book is currently out of stock.\n");
@@ -201,24 +180,19 @@ void issue_book() {
     fclose(fi);
 }
 
-// Return Book
 void return_book() {
     int book_id, user_id, found = 0;
     struct issue i;
-
     printf("Enter Book ID to return: ");
     scanf("%d", &book_id);
     printf("Enter Your User ID: ");
     scanf("%d", &user_id);
-
     FILE *fi = fopen("Book_Issue.txt", "rb");
     FILE *temp = fopen("Temp_Issue.txt", "wb");
-
     if(fi == NULL || temp == NULL) {
         printf("Error opening file.\n");
         return;
     }
-
     while(fread(&i, sizeof(struct issue), 1, fi)) {
         if(i.issue_book_id == book_id && i.user_id == user_id) {
             found = 1;
@@ -230,19 +204,15 @@ void return_book() {
 
     fclose(fi);
     fclose(temp);
-
     if(!found) {
         printf("No matching issue record found.\n");
         remove("Temp_Issue.txt");
         return;
     }
-
     remove("Book_Issue.txt");
     rename("Temp_Issue.txt", "Book_Issue.txt");
-
     FILE *fp = fopen("Book_Record.txt", "rb+");
     struct books b;
-
     if(fp == NULL) {
         printf("Error opening book file.\n");
         return;
